@@ -12,6 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DiscuzzSMDProject"
         tools:targetApi="31">
+
+        <!-- Login screen -->
+        <activity android:name=".LoginActivity" />
+
+        <!-- Sign up screen -->
+        <activity android:name=".RegisterActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

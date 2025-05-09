@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341779509070",
+    "project_id": "discuzz-smd",
+    "storage_bucket": "discuzz-smd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341779509070:android:cadbb74970bc590e39f81f",
+        "android_client_info": {
+          "package_name": "com.assignment1.calculatorapp.discuzz_smdproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQhupsCRkIK-Tigdv4-GTpm-PAll6yQFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
