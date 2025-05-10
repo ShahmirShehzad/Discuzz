@@ -1,0 +1,78 @@
+<!-- Example item_post.xml layout -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/postTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/postContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Content"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/postTimestamp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Timestamp"
+        android:textSize="12sp"
+        android:textColor="#888888" />
+
+    <!-- Likes, Dislikes, and Comments Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
+
+        <!-- Like Button -->
+        <ImageView
+            android:id="@+id/likeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
+
+        <TextView
+            android:id="@+id/likeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <!-- Dislike Button -->
+        <ImageView
+            android:id="@+id/dislikeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/dislikeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <!-- Comment Button -->
+        <ImageView
+            android:id="@+id/commentIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/comment"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/commentCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+    </LinearLayout>
+
+</LinearLayout>

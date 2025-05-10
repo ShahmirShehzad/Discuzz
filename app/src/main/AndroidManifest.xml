@@ -19,15 +19,20 @@
         <!-- Sign up screen -->
         <activity android:name=".RegisterActivity" />
 
+        <activity android:name=".CreatePostActivity" />
+        <activity android:name=".HomeActivity" />
+        <activity android:name=".AddCommentActivity"/>
+
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
