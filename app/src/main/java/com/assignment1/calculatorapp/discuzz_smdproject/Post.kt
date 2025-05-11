@@ -9,5 +9,6 @@ data class Post(
     var likes: Int = 0,
     var dislikes: Int = 0,
     var likedBy: MutableMap<String, Boolean> = mutableMapOf(),
-    var dislikedBy: MutableMap<String, Boolean> = mutableMapOf()
+    var dislikedBy: MutableMap<String, Boolean> = mutableMapOf(),
+    val category: String = ""
 )

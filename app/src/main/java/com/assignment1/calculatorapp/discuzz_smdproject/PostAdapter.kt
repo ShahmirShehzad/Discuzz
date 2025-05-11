@@ -8,16 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.MutableData
-import com.google.firebase.database.Transaction
+import com.google.firebase.database.*
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
-class PostAdapter(private val postList: List<Post>) :
+class PostAdapter(private var postList: MutableList<Post>) :
     RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,7 +22,6 @@ class PostAdapter(private val postList: List<Post>) :
         val likeCount: TextView = itemView.findViewById(R.id.likeCount)
         val dislikeCount: TextView = itemView.findViewById(R.id.dislikeCount)
         val commentCount: TextView = itemView.findViewById(R.id.commentCount)
-
         val likeIcon: ImageView = itemView.findViewById(R.id.likeIcon)
         val dislikeIcon: ImageView = itemView.findViewById(R.id.dislikeIcon)
         val commentIcon: ImageView = itemView.findViewById(R.id.commentIcon)
@@ -50,28 +44,24 @@ class PostAdapter(private val postList: List<Post>) :
         val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
         holder.timestampText.text = sdf.format(Date(post.timestamp))
 
-        // Set counts
+        // Set comment count
+        database.child("posts").child(post.id).child("commentsCount")
+            .get()
+            .addOnSuccessListener {
+                holder.commentCount.text = it.value?.toString() ?: "0"
+            }.addOnFailureListener {
+                holder.commentCount.text = "0"
+            }
+
+        // Set icon state
+        val isLiked = post.likedBy?.containsKey(currentUserId) == true
+        val isDisliked = post.dislikedBy?.containsKey(currentUserId) == true
+
+        holder.likeIcon.setImageResource(if (isLiked) R.drawable.clike else R.drawable.like)
+        holder.dislikeIcon.setImageResource(if (isDisliked) R.drawable.cdislike else R.drawable.dislike)
+
         holder.likeCount.text = post.likes.toString()
         holder.dislikeCount.text = post.dislikes.toString()
-        val countRef = database.child("posts").child(post.id).child("commentsCount")
-        countRef.get().addOnSuccessListener {
-            holder.commentCount.text = it.value?.toString() ?: "0"
-        }.addOnFailureListener {
-            holder.commentCount.text = "0"
-        }
-
-
-        // Like icon update
-        val isLiked = post.likedBy?.containsKey(currentUserId) == true
-        holder.likeIcon.setImageResource(
-            if (isLiked) R.drawable.clike else R.drawable.like
-        )
-
-        // Dislike icon update (optional - similar logic as likes)
-        val isDisliked = post.dislikedBy?.containsKey(currentUserId) == true
-        holder.dislikeIcon.setImageResource(
-            if (isDisliked) R.drawable.cdislike else R.drawable.dislike
-        )
 
         // Like click
         holder.likeIcon.setOnClickListener {
@@ -79,8 +69,8 @@ class PostAdapter(private val postList: List<Post>) :
             postRef.runTransaction(object : Transaction.Handler {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
                     val p = currentData.getValue(Post::class.java) ?: return Transaction.success(currentData)
-
                     if (p.likedBy == null) p.likedBy = mutableMapOf()
+                    if (p.dislikedBy == null) p.dislikedBy = mutableMapOf()
 
                     if (p.likedBy.containsKey(currentUserId)) {
                         p.likes -= 1
@@ -88,6 +78,12 @@ class PostAdapter(private val postList: List<Post>) :
                     } else {
                         p.likes += 1
                         p.likedBy[currentUserId!!] = true
+
+                        // Remove dislike
+                        if (p.dislikedBy.containsKey(currentUserId)) {
+                            p.dislikes -= 1
+                            p.dislikedBy.remove(currentUserId)
+                        }
                     }
 
                     currentData.value = p
@@ -95,7 +91,7 @@ class PostAdapter(private val postList: List<Post>) :
                 }
 
                 override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
-                    // You may refresh the post list or notify dataset changed here if needed
+                    notifyItemChanged(position)
                 }
             })
         }
@@ -106,7 +102,7 @@ class PostAdapter(private val postList: List<Post>) :
             postRef.runTransaction(object : Transaction.Handler {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
                     val p = currentData.getValue(Post::class.java) ?: return Transaction.success(currentData)
-
+                    if (p.likedBy == null) p.likedBy = mutableMapOf()
                     if (p.dislikedBy == null) p.dislikedBy = mutableMapOf()
 
                     if (p.dislikedBy.containsKey(currentUserId)) {
@@ -115,6 +111,12 @@ class PostAdapter(private val postList: List<Post>) :
                     } else {
                         p.dislikes += 1
                         p.dislikedBy[currentUserId!!] = true
+
+                        // Remove like
+                        if (p.likedBy.containsKey(currentUserId)) {
+                            p.likes -= 1
+                            p.likedBy.remove(currentUserId)
+                        }
                     }
 
                     currentData.value = p
@@ -122,7 +124,7 @@ class PostAdapter(private val postList: List<Post>) :
                 }
 
                 override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
-                    // Optional: handle UI update
+                    notifyItemChanged(position)
                 }
             })
         }
@@ -136,7 +138,11 @@ class PostAdapter(private val postList: List<Post>) :
         }
     }
 
-
-
     override fun getItemCount(): Int = postList.size
+
+    fun updateList(newList: List<Post>) {
+        postList.clear()
+        postList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }

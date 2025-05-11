@@ -14,23 +14,41 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:paddingHorizontal="16dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Discuzz"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageView
+                android:id="@+id/profileIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="18dp"
+                android:src="@drawable/appiconlogo"
+                android:contentDescription="Profile"
+                app:tint="@android:color/white" />
 
-        <ImageView
-            android:id="@+id/profileIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/loader"
-            android:contentDescription="Profile"
-            app:tint="@android:color/white" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Discuzz"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/logoutText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textColor="@android:color/white"
+                android:padding="8dp"
+                android:textSize="14sp" />
+        </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
+
 
     <!-- Tabs -->
     <com.google.android.material.tabs.TabLayout
@@ -55,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@drawable/loader"
+        android:src="@drawable/add"
         android:contentDescription="Add Post"
         app:backgroundTint="@android:color/holo_purple" />
 </LinearLayout>
