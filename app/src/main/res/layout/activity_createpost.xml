@@ -83,7 +83,9 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp" />
 
+
     <!-- Submit button -->
+
     <Button
         android:id="@+id/createPostButton"
         android:layout_width="match_parent"

@@ -29,7 +29,7 @@ class HomeActivity : AppCompatActivity() {
         // Profile icon click → go to User Settings
         val profileIcon = findViewById<ImageView>(R.id.profileIcon)
         profileIcon.setOnClickListener {
-            startActivity(Intent(this, UserSettingsActivity::class.java))
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         // Setup ViewPager with fragments

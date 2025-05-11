@@ -16,6 +16,7 @@
         <!-- Login screen -->
         <activity android:name=".LoginActivity" />
 
+        <activity android:name=".ProfileActivity" />
         <!-- Sign up screen -->
         <activity android:name=".RegisterActivity" />
 
@@ -23,6 +24,7 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".AddCommentActivity"/>
 
+        <activity android:name=".PostDetailsActivity" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">

@@ -33,111 +33,143 @@ class PostAdapter(private var postList: MutableList<Post>) :
         return PostViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = postList[position]
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        val database = FirebaseDatabase.getInstance().reference
 
-        holder.titleText.text = post.title
-        holder.contentText.text = post.details
+override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+    val post = postList[position]
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+    val database = FirebaseDatabase.getInstance().reference
 
-        val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
-        holder.timestampText.text = sdf.format(Date(post.timestamp))
-
-        // Set comment count
-        database.child("posts").child(post.id).child("commentsCount")
-            .get()
-            .addOnSuccessListener {
-                holder.commentCount.text = it.value?.toString() ?: "0"
-            }.addOnFailureListener {
-                holder.commentCount.text = "0"
-            }
-
-        // Set icon state
-        val isLiked = post.likedBy?.containsKey(currentUserId) == true
-        val isDisliked = post.dislikedBy?.containsKey(currentUserId) == true
-
-        holder.likeIcon.setImageResource(if (isLiked) R.drawable.clike else R.drawable.like)
-        holder.dislikeIcon.setImageResource(if (isDisliked) R.drawable.cdislike else R.drawable.dislike)
-
-        holder.likeCount.text = post.likes.toString()
-        holder.dislikeCount.text = post.dislikes.toString()
-
-        // Like click
-        holder.likeIcon.setOnClickListener {
-            val postRef = database.child("posts").child(post.id)
-            postRef.runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    val p = currentData.getValue(Post::class.java) ?: return Transaction.success(currentData)
-                    if (p.likedBy == null) p.likedBy = mutableMapOf()
-                    if (p.dislikedBy == null) p.dislikedBy = mutableMapOf()
-
-                    if (p.likedBy.containsKey(currentUserId)) {
-                        p.likes -= 1
-                        p.likedBy.remove(currentUserId)
-                    } else {
-                        p.likes += 1
-                        p.likedBy[currentUserId!!] = true
-
-                        // Remove dislike
-                        if (p.dislikedBy.containsKey(currentUserId)) {
-                            p.dislikes -= 1
-                            p.dislikedBy.remove(currentUserId)
-                        }
-                    }
-
-                    currentData.value = p
-                    return Transaction.success(currentData)
-                }
-
-                override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
-                    notifyItemChanged(position)
-                }
-            })
-        }
-
-        // Dislike click
-        holder.dislikeIcon.setOnClickListener {
-            val postRef = database.child("posts").child(post.id)
-            postRef.runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    val p = currentData.getValue(Post::class.java) ?: return Transaction.success(currentData)
-                    if (p.likedBy == null) p.likedBy = mutableMapOf()
-                    if (p.dislikedBy == null) p.dislikedBy = mutableMapOf()
-
-                    if (p.dislikedBy.containsKey(currentUserId)) {
-                        p.dislikes -= 1
-                        p.dislikedBy.remove(currentUserId)
-                    } else {
-                        p.dislikes += 1
-                        p.dislikedBy[currentUserId!!] = true
-
-                        // Remove like
-                        if (p.likedBy.containsKey(currentUserId)) {
-                            p.likes -= 1
-                            p.likedBy.remove(currentUserId)
-                        }
-                    }
-
-                    currentData.value = p
-                    return Transaction.success(currentData)
-                }
-
-                override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
-                    notifyItemChanged(position)
-                }
-            })
-        }
-
-        // Comment click
-        holder.commentIcon.setOnClickListener {
-            val context = holder.itemView.context
-            val intent = Intent(context, AddCommentActivity::class.java)
-            intent.putExtra("postId", post.id)
-            context.startActivity(intent)
-        }
+    holder.titleText.text = post.title
+    holder.contentText.text = post.details
+// Fetch user name
+database.child("Users").child(post.userId).get()
+    .addOnSuccessListener {
+        val firstName = it.child("firstName").value.toString()
+        val lastName = it.child("lastName").value.toString()
+        val fullName = "$firstName $lastName"
+        holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: $fullName"
+    }
+    .addOnFailureListener {
+        holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: Unknown"
     }
 
+    val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+    holder.timestampText.text = sdf.format(Date(post.timestamp))
+
+
+    // Set comment count
+    database.child("posts").child(post.id).child("commentsCount")
+        .get()
+        .addOnSuccessListener {
+            holder.commentCount.text = it.value?.toString() ?: "0"
+        }.addOnFailureListener {
+            holder.commentCount.text = "0"
+        }
+
+    // Navigate to PostDetailsActivity on item click
+    holder.itemView.setOnClickListener {
+        val context = holder.itemView.context
+        val intent = Intent(context, PostDetailsActivity::class.java)
+        intent.putExtra("postId", post.id)
+        context.startActivity(intent)
+    }
+
+    // Set icon state
+    val isLiked = post.likedBy?.containsKey(currentUserId) == true
+    val isDisliked = post.dislikedBy?.containsKey(currentUserId) == true
+
+    holder.likeIcon.setImageResource(if (isLiked) R.drawable.clike else R.drawable.like)
+    holder.dislikeIcon.setImageResource(if (isDisliked) R.drawable.cdislike else R.drawable.dislike)
+
+    holder.likeCount.text = post.likes.toString()
+    holder.dislikeCount.text = post.dislikes.toString()
+
+ // Like click
+ holder.likeIcon.setOnClickListener {
+     val postRef = database.child("posts").child(post.id)
+     postRef.runTransaction(object : Transaction.Handler {
+         override fun doTransaction(currentData: MutableData): Transaction.Result {
+             val p = currentData.getValue(Post::class.java) ?: return Transaction.success(currentData)
+             if (p.likedBy == null) p.likedBy = mutableMapOf()
+             if (p.dislikedBy == null) p.dislikedBy = mutableMapOf()
+
+             if (p.likedBy.containsKey(currentUserId)) {
+                 p.likes -= 1
+                 p.likedBy.remove(currentUserId)
+             } else {
+                 p.likes += 1
+                 p.likedBy[currentUserId!!] = true
+
+                 // Remove dislike
+                 if (p.dislikedBy.containsKey(currentUserId)) {
+                     p.dislikes -= 1
+                     p.dislikedBy.remove(currentUserId)
+                 }
+             }
+
+             currentData.value = p
+             return Transaction.success(currentData)
+         }
+
+         override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
+             if (committed && snapshot != null) {
+                 val updatedPost = snapshot.getValue(Post::class.java)
+                 if (updatedPost != null) {
+                     postList[position] = updatedPost
+                     notifyItemChanged(position)
+                 }
+             }
+         }
+     })
+ }
+
+ // Dislike click
+ holder.dislikeIcon.setOnClickListener {
+     val postRef = database.child("posts").child(post.id)
+     postRef.runTransaction(object : Transaction.Handler {
+         override fun doTransaction(currentData: MutableData): Transaction.Result {
+             val p = currentData.getValue(Post::class.java) ?: return Transaction.success(currentData)
+             if (p.likedBy == null) p.likedBy = mutableMapOf()
+             if (p.dislikedBy == null) p.dislikedBy = mutableMapOf()
+
+             if (p.dislikedBy.containsKey(currentUserId)) {
+                 p.dislikes -= 1
+                 p.dislikedBy.remove(currentUserId)
+             } else {
+                 p.dislikes += 1
+                 p.dislikedBy[currentUserId!!] = true
+
+                 // Remove like
+                 if (p.likedBy.containsKey(currentUserId)) {
+                     p.likes -= 1
+                     p.likedBy.remove(currentUserId)
+                 }
+             }
+
+             currentData.value = p
+             return Transaction.success(currentData)
+         }
+
+         override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
+             if (committed && snapshot != null) {
+                 val updatedPost = snapshot.getValue(Post::class.java)
+                 if (updatedPost != null) {
+                     postList[position] = updatedPost
+                     notifyItemChanged(position)
+                 }
+             }
+         }
+     })
+ }
+
+    // Comment click
+    holder.commentIcon.setOnClickListener {
+        val context = holder.itemView.context
+        val intent = Intent(context, AddCommentActivity::class.java)
+        intent.putExtra("postId", post.id)
+        context.startActivity(intent)
+    }
+}
     override fun getItemCount(): Int = postList.size
 
     fun updateList(newList: List<Post>) {
