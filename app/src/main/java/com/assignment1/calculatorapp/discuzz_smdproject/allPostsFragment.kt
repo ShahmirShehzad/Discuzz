@@ -82,7 +82,7 @@ class AllPostsFragment : Fragment() {
                 it.details.contains(query, ignoreCase = true)
             }
         }
-        adapter = PostAdapter(filteredPosts)
+        adapter = PostAdapter(filteredPosts.toMutableList())
         recyclerView.adapter = adapter
     }
 }

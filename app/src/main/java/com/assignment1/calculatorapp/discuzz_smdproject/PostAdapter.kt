@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class PostAdapter(private val postList: List<Post>) :
+class PostAdapter(private var postList: MutableList<Post>) :
     RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -139,4 +139,10 @@ class PostAdapter(private val postList: List<Post>) :
 
 
     override fun getItemCount(): Int = postList.size
+
+    fun updateList(newList: List<Post>) {
+        postList.clear()
+        postList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }

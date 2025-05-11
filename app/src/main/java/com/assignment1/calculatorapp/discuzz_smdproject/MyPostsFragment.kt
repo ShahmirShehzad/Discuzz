@@ -29,7 +29,7 @@ class MyPostsFragment : Fragment() {
         // Get posts for the current user from Firebase Realtime Database
         fetchUserPosts { posts ->
             // Filter posts to show only the current user's posts
-            val myPosts = posts.filter { it.userId == currentUserId }
+            val myPosts = posts.filter { it.userId == currentUserId }.toMutableList()
 
             // Set up RecyclerView with the filtered posts
             recyclerView.layoutManager = LinearLayoutManager(context)
