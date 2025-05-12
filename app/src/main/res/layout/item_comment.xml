@@ -2,19 +2,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="12dp"
+    android:background="@android:color/white">
 
+    <!-- Comment Text -->
     <TextView
         android:id="@+id/commentText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="This is a sample comment"
         android:textSize="16sp"
-        android:layout_marginBottom="4dp" />
+        android:textColor="@color/black"
+        android:lineSpacingExtra="2dp"
+        android:layout_marginBottom="6dp" />
 
+    <!-- Timestamp -->
     <TextView
         android:id="@+id/commentTimestamp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="2 hours ago"
         android:textSize="12sp"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@color/gray"
+        android:gravity="end" />
 </LinearLayout>

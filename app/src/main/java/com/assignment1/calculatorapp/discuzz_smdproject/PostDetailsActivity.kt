@@ -1,6 +1,8 @@
 package com.assignment1.calculatorapp.discuzz_smdproject
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,12 +26,20 @@ class PostDetailsActivity : AppCompatActivity() {
         postTitle = findViewById(R.id.postTitle)
         postDetails = findViewById(R.id.postDetails)
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView)
+        val addCommentButton = findViewById<Button>(R.id.addCommentButton)
 
         commentsRecyclerView.layoutManager = LinearLayoutManager(this)
         commentsAdapter = CommentsAdapter(commentsList)
         commentsRecyclerView.adapter = commentsAdapter
 
         val postId = intent.getStringExtra("postId") ?: return
+
+        addCommentButton.setOnClickListener {
+            val postId = intent.getStringExtra("postId")
+            val intent = Intent(this, AddCommentActivity::class.java)
+            intent.putExtra("postId", postId)
+            startActivity(intent)
+        }
 
         // Fetch post details
         database.child("posts").child(postId).get().addOnSuccessListener { snapshot ->

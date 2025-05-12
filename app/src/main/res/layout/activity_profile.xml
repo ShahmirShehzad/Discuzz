@@ -1,120 +1,80 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Profile"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingBottom="16dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="First Name:"
-        android:textStyle="bold" />
-    <TextView
-        android:id="@+id/firstNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp" />
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingBottom="24dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Last Name:"
-        android:textStyle="bold" />
-    <TextView
-        android:id="@+id/lastNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp" />
+        <!-- Name Section -->
+        <TextView android:text="First Name:" style="@style/ProfileLabel"/>
+        <TextView android:id="@+id/firstNameTextView" style="@style/ProfileValue"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Email:"
-        android:textStyle="bold" />
-    <TextView
-        android:id="@+id/emailTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp" />
+        <TextView android:text="Last Name:" style="@style/ProfileLabel"/>
+        <TextView android:id="@+id/lastNameTextView" style="@style/ProfileValue"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Bio:"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/bioEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter bio"
-        android:padding="8dp"
-        android:background="@android:drawable/edit_text" />
+        <!-- Email -->
+        <TextView android:text="Email:" style="@style/ProfileLabel"/>
+        <TextView android:id="@+id/emailTextView" style="@style/ProfileValue"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Gender:"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/genderEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter gender"
-        android:padding="8dp"
-        android:background="@android:drawable/edit_text" />
+        <!-- Editable Fields -->
+        <TextView android:text="Bio:" style="@style/ProfileLabel"/>
+        <EditText
+            android:id="@+id/bioEditText"
+            style="@style/ProfileEdit"
+            android:hint="Enter bio" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Old Password:"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/oldPasswordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter old password"
-        android:inputType="textPassword"
-        android:padding="8dp"
-        android:background="@android:drawable/edit_text" />
+        <TextView android:text="Gender:" style="@style/ProfileLabel"/>
+        <EditText
+            android:id="@+id/genderEditText"
+            style="@style/ProfileEdit"
+            android:hint="Enter gender" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="New Password:"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/newPasswordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter new password"
-        android:inputType="textPassword"
-        android:padding="8dp"
-        android:background="@android:drawable/edit_text" />
+        <!-- Password Fields -->
+        <TextView android:text="Old Password:" style="@style/ProfileLabel"/>
+        <EditText
+            android:id="@+id/oldPasswordEditText"
+            style="@style/ProfileEdit"
+            android:hint="Enter old password"
+            android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Info"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:textColor="@android:color/white" />
+        <TextView android:text="New Password:" style="@style/ProfileLabel"/>
+        <EditText
+            android:id="@+id/newPasswordEditText"
+            style="@style/ProfileEdit"
+            android:hint="Enter new password"
+            android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/changePasswordButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change Password"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:textColor="@android:color/white" />
-</LinearLayout>
+        <!-- Action Buttons -->
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Info"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#2563EB"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/changePasswordButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Password"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#2563EB"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</ScrollView>
