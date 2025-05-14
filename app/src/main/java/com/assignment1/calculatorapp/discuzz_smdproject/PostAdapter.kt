@@ -42,15 +42,37 @@ override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
     holder.titleText.text = post.title
     holder.contentText.text = post.details
 // Fetch user name
-database.child("Users").child(post.userId).get()
-    .addOnSuccessListener {
-        val firstName = it.child("firstName").value.toString()
-        val lastName = it.child("lastName").value.toString()
-        val fullName = "$firstName $lastName"
-        holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: $fullName"
+    val postedByTextView = holder.itemView.findViewById<TextView>(R.id.postedBy)
+    if (post.anonymous == true) {
+        postedByTextView.text = "Posted by: ${post.displayName}"
+    } else {
+        database.child("Users").child(post.userId).get()
+            .addOnSuccessListener {
+                val firstName = it.child("firstName").value.toString()
+                val lastName = it.child("lastName").value.toString()
+                val fullName = "$firstName $lastName"
+                postedByTextView.text = "Posted by: $fullName"
+            }
+            .addOnFailureListener {
+                postedByTextView.text = "Posted by: Unknown"
+            }
     }
-    .addOnFailureListener {
-        holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: Unknown"
+
+
+    // Check if post is expired
+    val currentTime = System.currentTimeMillis()
+    val isExpired = post.expirytime != null && post.expirytime < currentTime
+
+    if (isExpired) {
+        // Delete from Firebase
+        database.child("posts").child(post.id).removeValue()
+            .addOnSuccessListener {
+                // Remove from list and notify adapter
+                postList.removeAt(position)
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, postList.size)
+            }
+        return  // Exit early so it doesn't try to bind this expired post
     }
 
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())

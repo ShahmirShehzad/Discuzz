@@ -108,6 +108,55 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="24dp" />
 
+    <!-- Anonymous Post Toggle -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Post Anonymously"
+            android:textColor="#111827"
+            android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/anonymousSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Expiry Options Spinner -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Auto Expiry Duration"
+            android:textColor="#111827"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/expirySpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+
     <!-- Submit Button -->
     <Button
         android:id="@+id/createPostButton"

@@ -14,6 +14,8 @@ class CreatePostActivity : AppCompatActivity() {
     private lateinit var createPostButton: Button
     private lateinit var profileIcon: ImageView
     private lateinit var categorySpinner: Spinner
+    private lateinit var anonymousSwitch: Switch
+    private lateinit var expirySpinner: Spinner
 
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val database by lazy { FirebaseDatabase.getInstance().reference }
@@ -27,6 +29,8 @@ class CreatePostActivity : AppCompatActivity() {
         createPostButton = findViewById(R.id.createPostButton)
         profileIcon = findViewById(R.id.profileIcon)
         categorySpinner = findViewById(R.id.categorySpinner)
+        anonymousSwitch = findViewById(R.id.anonymousSwitch)
+        expirySpinner = findViewById(R.id.expirySpinner)
 
         createPostButton.setOnClickListener {
             createPost()
@@ -36,6 +40,10 @@ class CreatePostActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = adapter
+
+        val expiryOptions = arrayOf("None", "1 Minute (Test)", "1 Hour", "1 Day")
+        val expiryAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, expiryOptions)
+        expirySpinner.adapter = expiryAdapter
 
 //        profileIcon.setOnClickListener {
 //            startActivity(Intent(this, UserSettingsActivity::class.java))
@@ -65,13 +73,32 @@ class CreatePostActivity : AppCompatActivity() {
             return
         }
 
+        // Handle anonymous toggle
+        val isAnonymous = anonymousSwitch.isChecked
+        val displayName = if (isAnonymous) {
+            "anonymous_user${(1000..9999).random()}"
+        } else {
+            auth.currentUser?.displayName ?: "User"
+        }
+
+        val expirySelection = expirySpinner.selectedItem.toString()
+        val expiryTimestamp: Long? = when (expirySelection) {
+            "1 Minute (Test)" -> System.currentTimeMillis() + 1 * 60 * 1000
+            "1 Hour" -> System.currentTimeMillis() + 60 * 60 * 1000
+            "1 Day" -> System.currentTimeMillis() + 24 * 60 * 60 * 1000
+            else -> null // "None" selected
+        }
+
         val post = Post(
             id = postId,
             title = title,
             details = details,
             userId = userId,
             category = selectedCategory,
-            timestamp = System.currentTimeMillis()
+            timestamp = System.currentTimeMillis(),
+            displayName = displayName,
+            expirytime = expiryTimestamp,
+            anonymous = isAnonymous,
         )
 
         database.child("posts").child(postId).setValue(post)
