@@ -44,13 +44,17 @@ override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
 // Fetch user name
 database.child("Users").child(post.userId).get()
     .addOnSuccessListener {
-        val firstName = it.child("firstName").value.toString()
-        val lastName = it.child("lastName").value.toString()
-        val fullName = "$firstName $lastName"
+        val fullName = if (post.isAnonymous) {
+            "Anonymous"
+        } else {
+            val firstName = it.child("firstName").value.toString()
+            val lastName = it.child("lastName").value.toString()
+            "$firstName $lastName"
+        }
         holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: $fullName"
     }
     .addOnFailureListener {
-        holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: Unknown"
+        holder.itemView.findViewById<TextView>(R.id.postedBy).text = "Posted by: Anonymous"
     }
 
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())

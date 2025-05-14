@@ -10,5 +10,6 @@ data class Post(
     var dislikes: Int = 0,
     var likedBy: MutableMap<String, Boolean> = mutableMapOf(),
     var dislikedBy: MutableMap<String, Boolean> = mutableMapOf(),
-    val category: String = ""
+    val category: String = "",
+    val isAnonymous: Boolean = false // New field
 )

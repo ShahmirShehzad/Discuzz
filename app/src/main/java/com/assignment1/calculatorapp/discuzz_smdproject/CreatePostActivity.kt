@@ -6,6 +6,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import androidx.appcompat.widget.SwitchCompat
 
 class CreatePostActivity : AppCompatActivity() {
 
@@ -18,71 +19,77 @@ class CreatePostActivity : AppCompatActivity() {
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val database by lazy { FirebaseDatabase.getInstance().reference }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_createpost)
+private lateinit var anonymousSwitch: SwitchCompat
 
-        titleInput = findViewById(R.id.titleInput)
-        detailsInput = findViewById(R.id.detailsInput)
-        createPostButton = findViewById(R.id.createPostButton)
-        profileIcon = findViewById(R.id.profileIcon)
-        categorySpinner = findViewById(R.id.categorySpinner)
 
-        createPostButton.setOnClickListener {
-            createPost()
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_createpost)
+
+    // Initialize UI components
+    titleInput = findViewById(R.id.titleInput)
+    detailsInput = findViewById(R.id.detailsInput)
+    categorySpinner = findViewById(R.id.categorySpinner)
+    createPostButton = findViewById(R.id.createPostButton)
+    anonymousSwitch = findViewById(R.id.anonymousSwitch)
+
+    // Populate Spinner with tags
+            val categories = listOf("All", "Gaming", "Fitness", "Technology", "Education", "Others")
+
+    val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    categorySpinner.adapter = adapter
+
+    // Set the click listener
+    createPostButton.setOnClickListener {
+        createPost()
+    }
+    anonymousSwitch.setOnCheckedChangeListener { _, isChecked ->
+        if (isChecked) {
+            Toast.makeText(this, "Anonymous mode enabled", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Anonymous mode disabled", Toast.LENGTH_SHORT).show()
         }
+    }
+}
+private fun createPost() {
+    val title = titleInput.text.toString().trim()
+    val details = detailsInput.text.toString().trim()
+    val selectedCategory = categorySpinner.selectedItem?.toString() ?: ""
 
-        val categories = listOf("Select Category", "Gaming", "Fitness", "Education", "Tech", "Music")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        categorySpinner.adapter = adapter
-
-//        profileIcon.setOnClickListener {
-//            startActivity(Intent(this, UserSettingsActivity::class.java))
-//        }
+    if (title.isEmpty() || details.isEmpty() || selectedCategory.isEmpty() || selectedCategory == "Select Category") {
+        Toast.makeText(this, "Please fill in all fields and select a valid category", Toast.LENGTH_SHORT).show()
+        return
     }
 
-    private fun createPost() {
-        val title = titleInput.text.toString().trim()
-        val details = detailsInput.text.toString().trim()
-        val selectedCategory = categorySpinner.selectedItem.toString()
-        val userId = auth.currentUser?.uid
-
-        if (title.isEmpty() || details.isEmpty() || selectedCategory == "Select Category") {
-            Toast.makeText(this, "Please fill in all fields and select a category", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (userId == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val postId = database.child("posts").push().key
-
-        if (postId == null) {
-            Toast.makeText(this, "Failed to create post ID", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val post = Post(
-            id = postId,
-            title = title,
-            details = details,
-            userId = userId,
-            category = selectedCategory,
-            timestamp = System.currentTimeMillis()
-        )
-
-        database.child("posts").child(postId).setValue(post)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Post created successfully", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to create post: ${it.message}", Toast.LENGTH_LONG).show()
-            }
+    val userId = auth.currentUser?.uid
+    if (userId == null) {
+        Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+        return
     }
+
+    val postId = database.child("posts").push().key ?: return
+    val isAnonymous = anonymousSwitch.isChecked
+
+    val post = Post(
+        id = postId,
+        title = title,
+        details = details,
+        userId = userId,
+        category = selectedCategory,
+        timestamp = System.currentTimeMillis(),
+        isAnonymous = isAnonymous
+    )
+
+    database.child("posts").child(postId).setValue(post)
+        .addOnSuccessListener {
+            Toast.makeText(this, "Post created successfully", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
+        }
+        .addOnFailureListener {
+            Toast.makeText(this, "Failed to create post: ${it.message}", Toast.LENGTH_LONG).show()
+        }
+}
 
 }

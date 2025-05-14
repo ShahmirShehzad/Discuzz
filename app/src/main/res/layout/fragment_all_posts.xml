@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:queryHint="Search posts"
         android:iconifiedByDefault="false"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="12dp"
+        android:focusable="true"
+        android:clickable="true" />
 
     <!-- Posts RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
